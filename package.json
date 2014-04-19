@@ -1,0 +1,29 @@
+{
+  "name": "koa-i18n",
+  "version": "0.0.0",
+  "description": "Lightweight simple translation middleware for koa, based on i18n-2",
+  "main": "index.js",
+  "scripts": {
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/fundon/koa-i18n.git"
+  },
+  "keywords": [
+    "koa",
+    "locale",
+    "i18n",
+    "lang"
+  ],
+  "author": "Fangdun Cai <cfddream@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/fundon/koa-i18n/issues"
+  },
+  "homepage": "https://github.com/fundon/koa-i18n",
+  "dependencies": {
+    "i18n-2": "^0.4.6",
+    "koa-locale": "^0.1.0"
+  }
+}
