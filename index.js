@@ -31,15 +31,21 @@ module.exports = function (app, opts) {
 
     [
       'Query',
-      'Subdomain'
+      'Subdomain',
       'Cookie',
       'Header'
     ].forEach(function (m) {
       i18n['setLocaleFrom' + m] = function () {
         var locale = getLocale(request['getLocaleFrom' + m]());
-        if (locale && i18n.locales[locale]) {
-          debug("Overriding locale from %s : %s", m.toLowerCase(), locale);
+        if (locale && !i18n.locales[locale]) {
+          locale = locale.split('-')[0];
+          if (!i18n.locales[locale]) {
+            locale = null;
+          }
+        }
+        if (locale) {
           i18n.setLocale(locale);
+          debug("Overriding locale from %s : %s", m.toLowerCase(), locale);
         }
       };
     });
@@ -58,7 +64,8 @@ module.exports = function (app, opts) {
   });
 
   return function *i18n(next) {
-    this.i18n.setLocaleFromHeader();
+    //this.i18n.setLocaleFromHeader();
+    this.i18n.setLocaleFromQuery();
     yield *next;
   };
 };

@@ -1,6 +1,6 @@
 {
   "name": "koa-i18n",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Lightweight simple translation middleware for koa, based on i18n-2",
   "main": "index.js",
   "scripts": {
@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/fundon/koa-i18n",
   "dependencies": {
+    "debug": "^0.7.4",
     "i18n-2": "^0.4.6",
     "koa-locale": "^0.1.0"
   }
