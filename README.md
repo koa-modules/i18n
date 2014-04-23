@@ -2,8 +2,8 @@
 
   I18n fro koa.    
   Based on [i18n-2][].   
-  *NOTE: If you want to use koa-i18n, [koa-locale[] muste be requred!*   
-  *NOTE: If you want to use templates render work together with koa-i18n, [koa-locals][] must be required!*
+  ***NOTE: If you want to use koa-i18n, [koa-locale][] muste be requred!***   
+  ***NOTE: If you want to use templates render work together with koa-i18n, [koa-locals][] must be required!***
 
 
 ### Usage
