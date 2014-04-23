@@ -1,8 +1,8 @@
 # koa-i18n [![Build Status](https://travis-ci.org/fundon/koa-i18n.svg)](https://travis-ci.org/fundon/koa-i18n)
 
   I18n fro koa.    
-  Based on [i18n-2][].
-  *NOTE: If you want to use koa-i18n, [koa-locale[] muste be requred!*
+  Based on [i18n-2][].   
+  *NOTE: If you want to use koa-i18n, [koa-locale[] muste be requred!*   
   *NOTE: If you want to use templates render work together with koa-i18n, [koa-locals][] must be required!*
 
 
