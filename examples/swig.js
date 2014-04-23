@@ -21,7 +21,7 @@ app.use(i18n(app, {
 }));
 
 app.use(function *(next) {
-  yield this.render('index')
+  yield this.render('swig')
 });
 
 app.listen(3000);
