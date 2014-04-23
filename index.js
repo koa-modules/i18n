@@ -14,10 +14,10 @@ var i18n2 = require('i18n-2');
 
 function I18n(opts) {
   i18n2.call(this, opts);
-  this.enables = Object.create(null);
+  var enables = this.enables = Object.create(null);
   localeMethods.forEach(function (v) {
-    if (opts[v.toLowerCase()]) this.enables[v] = true;
-  }.bind(this));
+    if (opts[v.toLowerCase()]) enables[v] = true;
+  });
 }
 
 mixin(I18n, i18n2);
