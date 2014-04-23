@@ -94,7 +94,9 @@ function ial(app, opts) {
 
 function registerMethods(helpers, i18n) {
   I18n.resMethods.forEach(function (method) {
-    helpers[method] = i18n[method].bind(i18n);
+    helpers[method] = function () {
+      return i18n[method].apply(i18n, arguments);
+    };
   });
   return helpers;
 }
