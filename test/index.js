@@ -11,6 +11,7 @@ var compose = require('koa-compose');
 var locale = require('koa-locale');
 var locals = require('koa-locals');
 var render = require('koa-swig');
+var views = require('koa-views');
 var i18n = require('..');
 
 describe('koa-i18n', function () {
@@ -168,6 +169,32 @@ describe('koa-i18n', function () {
         root: __dirname + '/fixtures/',
         ext: 'html'
       });
+
+      app.use(function *(next) {
+        yield this.render('index')
+      });
+
+      request(app.listen())
+        .get('/')
+        .set('Cookie', 'locale=zh-cn')
+        .expect(/英文/)
+        .expect(200, done);
+    });
+  });
+
+  describe('working together with koa-views, jade render', function () {
+    it('should be render by zh-cn locale', function (done) {
+      var app = koa();
+
+      locale(app);
+
+      app.use(views(__dirname + '/fixtures/', 'jade'));
+
+      app.use(i18n(app, {
+        directory: __dirname + '/fixtures/locales',
+        locales: ['zh-cn', 'en', 'zh-tw'],
+        cookie: true
+      }));
 
       app.use(function *(next) {
         yield this.render('index')
