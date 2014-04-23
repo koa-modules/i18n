@@ -5,16 +5,51 @@
  */
 
 var debug = require('debug')('koa:i18n');
-var locale = require('koa-locale');
-var I18n = require('i18n-2');
+var mixin = require('utils-merge');
+var i18n2 = require('i18n-2');
+
+/**
+ *  Hacked i18n.
+ */
+
+function I18n(opts) {
+  i18n2.call(this, opts);
+  this.enables = Object.create(null);
+  localeMethods.forEach(function (v) {
+    if (opts[v.toLowerCase()]) this.enables[v] = true;
+  }.bind(this));
+}
+
+mixin(I18n, i18n2);
+
+I18n.prototype.__proto__ = i18n2.prototype;
+
+var localeMethods = [ 'Query', 'Subdomain', 'Cookie', 'Header' ];
+var SET_PREFIX = 'setLocaleFrom';
+var GET_PREFIX = 'getLocaleFrom';
+localeMethods.forEach(function (m) {
+  I18n.prototype[SET_PREFIX + m] = function () {
+    var locale = getLocale(this.request[GET_PREFIX + m]());
+    if (locale === this.getLocale()) return;
+    if (locale && !this.locales[locale]) {
+      locale = null;
+    }
+    if (locale) {
+      this.setLocale(locale);
+      debug('Overriding locale from %s : %s', m.toLowerCase(), locale);
+    }
+  };
+});
 
 /**
  *  Expose
  */
 
-module.exports = function (app, opts) {
+module.exports = ial;
 
-  locale(app);
+
+// Internationalization and Localization
+function ial(app, opts) {
 
   /**
    *  Lazily creates an i18n.
@@ -27,35 +62,15 @@ module.exports = function (app, opts) {
       return this._i18n;
     }
 
-    var i18n = this._i18n = new I18n(opts), request = this.request;
+    var i18n = this._i18n = new I18n(opts);
+    i18n.request = this.request;
 
-    [
-      'Query',
-      'Subdomain',
-      'Cookie',
-      'Header'
-    ].forEach(function (m) {
-      i18n['setLocaleFrom' + m] = function () {
-        var locale = getLocale(request['getLocaleFrom' + m]());
-        if (locale && !i18n.locales[locale]) {
-          locale = locale.split('-')[0];
-          if (!i18n.locales[locale]) {
-            locale = null;
-          }
-        }
-        if (locale) {
-          i18n.setLocale(locale);
-          debug("Overriding locale from %s : %s", m.toLowerCase(), locale);
-        }
-      };
-    });
-
+    // merge into ctx.locals
     if (this.locals) {
       registerMethods(this.locals, this._i18n);
     }
 
     debug('app.ctx.i18n %j', this._i18n);
-
     return this._i18n;
   });
 
@@ -64,11 +79,14 @@ module.exports = function (app, opts) {
   });
 
   return function *i18n(next) {
-    //this.i18n.setLocaleFromHeader();
-    this.i18n.setLocaleFromQuery();
+    var i18n = this.i18n;
+    var enables = i18n.enables;
+    for (var key in enables) {
+      i18n[SET_PREFIX + key]();
+    }
     yield *next;
   };
-};
+}
 
 /**
  *  register methods
@@ -83,4 +101,4 @@ function registerMethods(helpers, i18n) {
 
 function getLocale(locale) {
   return (locale || '').toLowerCase();
-};
+}
