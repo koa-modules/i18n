@@ -102,5 +102,5 @@ function registerMethods(helpers, i18n) {
 }
 
 function getLocale(locale) {
-  return (locale || '').toLowerCase();
+  return locale || '';
 }
