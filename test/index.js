@@ -24,7 +24,7 @@ describe('koa-i18n', function () {
 
       app.use(i18n(app, {
         directory: __dirname + '/fixtures/locales',
-        locales: ['zh-cn', 'en'],
+        locales: ['zh-CN', 'en'],
         query: true
       }));
 
@@ -68,7 +68,7 @@ describe('koa-i18n', function () {
 
     app.use(i18n(app, {
       directory: __dirname + '/fixtures/locales',
-      locales: ['zh-cn', 'en', 'zh-tw'],
+      locales: ['zh-CN', 'en', 'zh-tw'],
       subdomain: true
     }));
 
@@ -110,7 +110,7 @@ describe('koa-i18n', function () {
 
       app.use(i18n(app, {
         directory: __dirname + '/fixtures/locales',
-        locales: ['zh-cn', 'en', 'zh-tw'],
+        locales: ['zh-CN', 'en', 'zh-tw'],
         header: true
       }));
 
@@ -136,7 +136,7 @@ describe('koa-i18n', function () {
 
       app.use(i18n(app, {
         directory: __dirname + '/fixtures/locales',
-        locales: ['zh-cn', 'en', 'zh-tw'],
+        locales: ['zh-CN', 'en', 'zh-tw'],
         cookie: true
       }));
 
@@ -161,7 +161,7 @@ describe('koa-i18n', function () {
 
       app.use(i18n(app, {
         directory: __dirname + '/fixtures/locales',
-        locales: ['zh-cn', 'en', 'zh-tw'],
+        locales: ['zh-CN', 'en', 'zh-tw'],
         cookie: true
       }));
 
@@ -176,7 +176,7 @@ describe('koa-i18n', function () {
 
       request(app.listen())
         .get('/')
-        .set('Cookie', 'locale=zh-cn')
+        .set('Cookie', 'lang=zh-cn')
         .expect(/英文/)
         .expect(200, done);
     });
@@ -192,7 +192,7 @@ describe('koa-i18n', function () {
 
       app.use(i18n(app, {
         directory: __dirname + '/fixtures/locales',
-        locales: ['zh-cn', 'en', 'zh-tw'],
+        locales: ['zh-CN', 'en', 'zh-tw'],
         cookie: true
       }));
 
@@ -202,7 +202,7 @@ describe('koa-i18n', function () {
 
       request(app.listen())
         .get('/')
-        .set('Cookie', 'locale=zh-cn')
+        .set('Cookie', 'lang=zh-cn')
         .expect(/英文/)
         .expect(200, done);
     });

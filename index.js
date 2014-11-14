@@ -30,11 +30,8 @@ var GET_PREFIX = 'getLocaleFrom';
 localeMethods.forEach(function (m) {
   I18n.prototype[SET_PREFIX + m] = function () {
     var locale = getLocale(this.request[GET_PREFIX + m]());
-    if (locale === this.getLocale()) return;
-    if (locale && !this.locales[locale]) {
-      locale = null;
-    }
-    if (locale) {
+    if (locale === this.getLocale().toLowerCase()) return;
+    if ((locale = filter(locale, this.locales))) {
       this.setLocale(locale);
       debug('Overriding locale from %s : %s', m.toLowerCase(), locale);
     }
@@ -103,4 +100,13 @@ function registerMethods(helpers, i18n) {
 
 function getLocale(locale) {
   return (locale || '').toLowerCase();
+}
+
+function filter(locale, locales) {
+	for (var k in locales) {
+		if (locale === k.toLowerCase()) {
+			return k;
+		}
+	}
+	return null;
 }

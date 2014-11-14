@@ -1,4 +1,4 @@
-# koa-i18n [![Build Status](https://travis-ci.org/fundon/koa-i18n.svg)](https://travis-ci.org/fundon/koa-i18n)
+# koa-i18n [![Build Status](https://travis-ci.org/koa-modules/koa-i18n.svg)](https://travis-ci.org/koa-modules/koa-i18n)
 
   I18n fro koa.    
   Based on [i18n-2][].   
@@ -35,7 +35,7 @@ render(app, {
 
 app.use(i18n(app, {
   directory: './config/locales',
-  locales: ['zh-CN', 'en'],       //  `zh-CN` defualtLocale
+  locales: ['zh-CN', 'en'],       //  `zh-CN` defualtLocale, must match the locales to the filenames
   query: true,                    //  optional detect querystring - `/?lang=en-US`
   subdomain: true,                //  optional detect subdomain   - `zh-CN.koajs.com`
   cookie: true,                   //  optional detect cookie      - `Accept-Language: zh-CN,zh;q=0.5`
@@ -64,5 +64,5 @@ MIT
 
 
 [i18n-2]: https://github.com/jeresig/i18n-node-2
-[koa-locale]: https://github.com/fundon/koa-locale
-[koa-locals]: https://github.com/fundon/koa-locals
+[koa-locale]: https://github.com/koa-modules/koa-locale
+[koa-locals]: https://github.com/koa-modules/koa-locals
