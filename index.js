@@ -103,10 +103,10 @@ function getLocale(locale) {
 }
 
 function filter(locale, locales) {
-	for (var k in locales) {
-		if (locale === k.toLowerCase()) {
-			return k;
-		}
-	}
-	return null;
+  for (var k in locales) {
+    if (locale === k.toLowerCase()) {
+      return k;
+    }
+  }
+  return null;
 }
