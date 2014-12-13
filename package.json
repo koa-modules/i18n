@@ -29,7 +29,7 @@
   },
   "devDependencies": {
     "jade": "*",
-    "koa": "git+ssh://git@github.com:koajs/koa.git#master",
+    "koa": "koajs/koa#master",
     "koa-compose": "*",
     "koa-locale": "*",
     "koa-locals": "*",
