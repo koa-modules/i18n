@@ -6,9 +6,13 @@ var i18n = require('..');
 // Required! 
 locale(app);
 
-app.use(views(__dirname, 'jade', {
-  ext: 'html'
-}));
+// Compatible `this.locals`.
+app.use(function *(next) {
+  this.locals = this.state;
+  yield *next;
+});
+
+app.use(views(__dirname, { default: 'jade' }));
 
 app.use(i18n(app, {
   directory: __dirname + '/locales',

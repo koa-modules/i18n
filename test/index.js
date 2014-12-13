@@ -188,7 +188,12 @@ describe('koa-i18n', function () {
 
       locale(app);
 
-      app.use(views(__dirname + '/fixtures/', 'jade'));
+      app.use(function *(next) {
+        this.locals = this.state;
+        yield *next;
+      });
+
+      app.use(views(__dirname + '/fixtures/', { default: 'jade' }));
 
       app.use(i18n(app, {
         directory: __dirname + '/fixtures/locales',
@@ -203,7 +208,7 @@ describe('koa-i18n', function () {
       request(app.listen())
         .get('/')
         .set('Cookie', 'lang=zh-cn')
-        .expect(/英文/)
+        .expect(/<div><p>英文<\/p><\/div>/)
         .expect(200, done);
     });
   });

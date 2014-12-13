@@ -62,9 +62,9 @@ function ial(app, opts) {
     var i18n = this._i18n = new I18n(opts);
     i18n.request = this.request;
 
-    // merge into ctx.locals
-    if (this.locals) {
-      registerMethods(this.locals, this._i18n);
+    // merge into ctx.state
+    if (this.state) {
+      registerMethods(this.state, this._i18n);
     }
 
     debug('app.ctx.i18n %j', this._i18n);

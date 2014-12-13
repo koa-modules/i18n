@@ -2,8 +2,9 @@
 
   I18n fro koa.    
   Based on [i18n-2][].   
-  ***NOTE: If want to use koa-i18n, [koa-locale][] muste be requred!***   
-  ***NOTE: If want to work together with templates render, [koa-locals][] must be required!***
+  **NOTE: If want to use koa-i18n, [koa-locale][] muste be requred!**   
+  --NOTE: If want to work together with templates render, [koa-locals][] must be required!--   
+  **Currently, Koa has `state` in `master` branch, so we can use `this.state` instead of `this.locas` or [koa-locals][] module.**
 
 
 ### Usage
@@ -19,15 +20,12 @@ npm install koa-i18n
 ```js
 var app = require('koa')();
 var locale = require('koa-locale'); //  detect the locale
-var locals = require('koa-locals'); //  local variables for templates render
 var render = require('koa-swig');   //  swig render
 var i18n = require('koa-i18n');
 
 // Required! 
 locale(app);
 
-// Working together with template render must require!
-locals(app)
 render(app, {
   root: __dirname + '/views/',
   ext: 'html'
