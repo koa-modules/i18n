@@ -4,7 +4,7 @@
   Based on [i18n-2][].   
   **NOTE: If want to use koa-i18n, [koa-locale][] muste be requred!**   
   ~~NOTE: If want to work together with templates render, [koa-locals][] must be required!~~   
-  **Currently, Koa has `state` in `master` branch, so we can use `this.state` instead of `this.locas` or [koa-locals][] module.**
+  **Currently, Koa has `state`, so we can use `this.state` instead of `this.locals` or [koa-locals][] module.**
 
 
 ### Usage
