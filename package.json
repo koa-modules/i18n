@@ -1,6 +1,6 @@
 {
   "name": "koa-i18n",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Lightweight simple translation middleware for koa, based on i18n-2",
   "main": "index.js",
   "scripts": {
@@ -29,11 +29,11 @@
   },
   "devDependencies": {
     "jade": "*",
-    "koa": "koajs/koa#master",
+    "koa": "*",
     "koa-compose": "*",
     "koa-locale": "*",
     "koa-locals": "*",
-    "koa-swig": "~1.1.0",
+    "koa-swig": "*",
     "koa-views": "*",
     "mocha": "*",
     "should": "*",
