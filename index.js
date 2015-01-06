@@ -1,4 +1,4 @@
-'use strict';
+/*jshint esnext:true */
 
 /**
  *  Module dependencies.
@@ -22,9 +22,9 @@ function I18n(opts) {
 
 mixin(I18n, i18n2);
 
-I18n.prototype.__proto__ = i18n2.prototype;
+I18n.prototype = Object.create(i18n2.prototype);
 
-var localeMethods = [ 'Query', 'Subdomain', 'Cookie', 'Header' ];
+var localeMethods = [ 'Subdomain', 'Cookie', 'Header', 'Query' ];
 var SET_PREFIX = 'setLocaleFrom';
 var GET_PREFIX = 'getLocaleFrom';
 localeMethods.forEach(function (m) {
@@ -75,13 +75,13 @@ function ial(app, opts) {
     return this.ctx.i18n;
   });
 
-  return function *i18n(next) {
+  return function *i18nMiddleware(next) {
     var i18n = this.i18n;
     var enables = i18n.enables;
     for (var key in enables) {
       i18n[SET_PREFIX + key]();
     }
-    yield *next;
+    yield next;
   };
 }
 
