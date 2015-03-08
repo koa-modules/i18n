@@ -1,21 +1,22 @@
-# koa-i18n [![Build Status](https://travis-ci.org/koa-modules/koa-i18n.svg)](https://travis-ci.org/koa-modules/koa-i18n)
+# koa-i18n
 
-  I18n fro koa.    
-  Based on [i18n-2][].   
-  **NOTE: If want to use koa-i18n, [koa-locale][] muste be requred!**   
-  ~~NOTE: If want to work together with templates render, [koa-locals][] must be required!~~   
-  **Currently, Koa has `state`, so we can use `this.state` instead of `this.locals` or [koa-locals][] module.**
+> I18n fro koa, based on [i18n-2].
+  **NOTE**: If want to use koa-i18n, [koa-locale] muste be requred!
 
+[![NPM version][npm-img]][npm-url]
+[![Build status][travis-img]][travis-url]
+[![Test coverage][coveralls-img]][coveralls-url]
+[![License][license-img]][license-url]
+[![Dependency status][david-img]][david-url]
+
+
+### Installation
+
+```bash
+$ npm install koa-i18n
+```
 
 ### Usage
-
-#### Install
-
-```
-npm install koa-i18n
-```
-
-#### Example
 
 ```js
 var app = require('koa')();
@@ -23,7 +24,7 @@ var locale = require('koa-locale'); //  detect the locale
 var render = require('koa-swig');   //  swig render
 var i18n = require('koa-i18n');
 
-// Required! 
+// Required!
 locale(app);
 
 render(app, {
@@ -33,11 +34,15 @@ render(app, {
 
 app.use(i18n(app, {
   directory: './config/locales',
-  locales: ['zh-CN', 'en'],       //  `zh-CN` defualtLocale, must match the locales to the filenames
-  query: true,                    //  optional detect querystring - `/?lang=en-US`
-  subdomain: true,                //  optional detect subdomain   - `zh-CN.koajs.com`
-  cookie: true,                   //  optional detect cookie      - `Accept-Language: zh-CN,zh;q=0.5`
-  header: true                    //  optional detect header      - `Cookie: lang=zh-TW`
+  locales: ['zh-CN', 'en'], //  `zh-CN` defualtLocale, must match the locales to the filenames
+  modes: [
+    'query',                //  optional detect querystring - `/?locale=en-US`
+    'subdomain',            //  optional detect subdomain   - `zh-CN.koajs.com`
+    'cookie',               //  optional detect cookie      - `Accept-Language: zh-CN,zh;q=0.5`
+    'header',               //  optional detect header      - `Cookie: locale=zh-TW`
+    'url',                  //  optional detect url         - `/en`
+    'tld'                   //  optional detect tld(the last domain) - `koajs.cn`
+  ]
 }));
 
 app.use(function *(next) {
@@ -49,8 +54,11 @@ app.use(function *(next) {
 });
 ```
 
+> **Tip**: We can change position of the elements in the `modes` array.
+> If one mode is detected, no continue to detect.
 
-#### Dependencies
+
+### Dependencies
 
 * [i18n-2][]
 * [koa-locale][] - Get locale variable from query, subdomain, accept-languages or cookie
@@ -58,9 +66,18 @@ app.use(function *(next) {
 
 ### License
 
-MIT
-
+  MIT
 
 [i18n-2]: https://github.com/jeresig/i18n-node-2
 [koa-locale]: https://github.com/koa-modules/koa-locale
-[koa-locals]: https://github.com/koa-modules/koa-locals
+
+[npm-img]: https://img.shields.io/npm/v/koa-i18n.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/koa-i18n
+[travis-img]: https://img.shields.io/travis/koa-modules/i18n.svg?style=flat-square
+[travis-url]: https://travis-ci.org/koa-modules/i18n
+[coveralls-img]: https://img.shields.io/coveralls/koa-modules/i18n.svg?style=flat-square
+[coveralls-url]: https://coveralls.io/r/koa-modules/i18n?branch=master
+[license-img]: https://img.shields.io/badge/license-MIT-green.svg?style=flat-square
+[license-url]: LICENSE
+[david-img]: https://img.shields.io/david/koa-modules/i18n.svg?style=flat-square
+[david-url]: https://david-dm.org/koa-modules/i18n

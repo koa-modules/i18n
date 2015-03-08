@@ -1,7 +1,14 @@
+/*!
+ * locale
+ * Copyright(c) 2015 Fangdun Cai and Other Contributors
+ * MIT Licensed
+ */
+
 /*jshint esnext:true */
 
+
 /**
- *  Module dependencies.
+ * Module dependencies.
  */
 
 var debug = require('debug')('koa:i18n');
@@ -9,14 +16,18 @@ var mixin = require('utils-merge');
 var i18n2 = require('i18n-2');
 
 /**
- *  Hacked i18n.
+ * Hacked i18n.
  */
 
 function I18n(opts) {
   i18n2.call(this, opts);
-  var enables = this.enables = Object.create(null);
+  var enables = this.enables = [];
+  var modes = opts.modes || [];
   localeMethods.forEach(function (v) {
-    if (opts[v.toLowerCase()]) enables[v] = true;
+    var lv = v.toLowerCase();
+    if (modes.filter(function (t) { return t.toLowerCase() === lv; }).length) {
+      enables.push(v);
+    }
   });
 }
 
@@ -24,69 +35,73 @@ mixin(I18n, i18n2);
 
 I18n.prototype = Object.create(i18n2.prototype);
 
-var localeMethods = [ 'Subdomain', 'Cookie', 'Header', 'Query' ];
+var localeMethods = [ 'Subdomain', 'Cookie', 'Header', 'Query', 'Url', 'TLD' ];
 var SET_PREFIX = 'setLocaleFrom';
 var GET_PREFIX = 'getLocaleFrom';
 localeMethods.forEach(function (m) {
-  I18n.prototype[SET_PREFIX + m] = function () {
-    var locale = getLocale(this.request[GET_PREFIX + m]());
-    if (locale === this.getLocale().toLowerCase()) return;
-    if ((locale = filter(locale, this.locales))) {
-      this.setLocale(locale);
-      debug('Overriding locale from %s : %s', m.toLowerCase(), locale);
+  Object.defineProperty(I18n.prototype, SET_PREFIX + m, {
+    value: function () {
+      var locale = getLocale(this.request[GET_PREFIX + m]());
+      if (locale === this.getLocale().toLowerCase()) return;
+      if ((locale = filter(locale, this.locales))) {
+        this.setLocale(locale);
+        debug('Overriding locale from %s : %s', m.toLowerCase(), locale);
+        return true;
+      }
     }
-  };
+  });
 });
 
 /**
- *  Expose
+ *  Expose ial.
  */
 
 module.exports = ial;
-
 
 // Internationalization and Localization
 function ial(app, opts) {
 
   /**
-   *  Lazily creates an i18n.
+   * Lazily creates an i18n.
    *
-   *  @api public
+   * @api public
    */
 
-  app.context.__defineGetter__('i18n', function () {
-    if (this._i18n) {
+  Object.defineProperty(app.context, 'i18n', {
+    get: function () {
+      if (this._i18n) {
+        return this._i18n;
+      }
+
+      var i18n = this._i18n = new I18n(opts);
+      i18n.request = this.request;
+
+      // merge into ctx.state
+      registerMethods(this.state, this._i18n);
+
+      debug('app.ctx.i18n %j', this._i18n);
       return this._i18n;
     }
-
-    var i18n = this._i18n = new I18n(opts);
-    i18n.request = this.request;
-
-    // merge into ctx.state
-    if (this.state) {
-      registerMethods(this.state, this._i18n);
-    }
-
-    debug('app.ctx.i18n %j', this._i18n);
-    return this._i18n;
   });
 
-  app.request.__defineGetter__('i18n', function () {
-    return this.ctx.i18n;
+  Object.defineProperty(app.request, 'i18n', {
+    get: function () {
+      return this.ctx.i18n;
+    }
   });
 
   return function *i18nMiddleware(next) {
     var i18n = this.i18n;
     var enables = i18n.enables;
-    for (var key in enables) {
-      i18n[SET_PREFIX + key]();
-    }
+    enables.forEach(function (key) {
+      if (i18n[SET_PREFIX + key]()) return false;
+    });
     yield next;
   };
 }
 
 /**
- *  register methods
+ * Register methods
  */
 
 function registerMethods(helpers, i18n) {

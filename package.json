@@ -6,22 +6,15 @@
   "scripts": {
     "test": "make test"
   },
-  "repository": {
-    "type": "git",
-    "url": "http://github.com/koa-modules/koa-i18n.git"
-  },
+  "repository": "http://github.com/koa-modules/koa-i18n.git",
   "keywords": [
     "koa",
     "locale",
     "i18n",
-    "lang"
+    "languages"
   ],
   "author": "Fangdun Cai <cfddream@gmail.com>",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/koa-modules/koa-i18n/issues"
-  },
-  "homepage": "https://github.com/koa-modules/koa-i18n",
   "dependencies": {
     "debug": "*",
     "i18n-2": "*",
@@ -32,7 +25,6 @@
     "koa": "*",
     "koa-compose": "*",
     "koa-locale": "*",
-    "koa-locals": "*",
     "koa-swig": "*",
     "koa-views": "*",
     "mocha": "*",
