@@ -30,5 +30,8 @@
     "mocha": "*",
     "should": "*",
     "supertest": "*"
-  }
+  },
+  "files": [
+    "index.js"
+  ]
 }
