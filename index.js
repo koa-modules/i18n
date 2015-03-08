@@ -1,5 +1,5 @@
 /*!
- * locale
+ * i18n
  * Copyright(c) 2015 Fangdun Cai and Other Contributors
  * MIT Licensed
  */
