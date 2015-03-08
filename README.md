@@ -1,7 +1,7 @@
 # koa-i18n
 
 > I18n fro koa, based on [i18n-2].
-  **NOTE**: If want to use koa-i18n, [koa-locale] must be requred!
+> **NOTE**: If want to use koa-i18n, [koa-locale] must be requred!
 
 [![NPM version][npm-img]][npm-url]
 [![Build status][travis-img]][travis-url]
