@@ -32,7 +32,7 @@ describe('koa-i18n', function() {
       });
 
       request(app.listen())
-        .get('/?lang=en')
+        .get('/?locale=en')
         .expect(/english/i)
         .expect(200, done);
     });
@@ -129,9 +129,7 @@ describe('koa-i18n', function() {
     it('should be `zh-cn` locale', function(done) {
       var app = koa();
 
-      locale(app, {
-        lang: 'locale'
-      });
+      locale(app);
 
       app.use(i18n(app, {
         directory: __dirname + '/fixtures/locales',
@@ -174,7 +172,7 @@ describe('koa-i18n', function() {
 
       request(app.listen())
         .get('/')
-        .set('Cookie', 'lang=zh-cn')
+        .set('Cookie', 'locale=zh-cn')
         .expect(/英文/)
         .expect(200, done);
     });
@@ -184,7 +182,7 @@ describe('koa-i18n', function() {
     it('should be render by zh-cn locale', function(done) {
       var app = koa();
 
-      locale(app);
+      locale(app, 'lang');
 
       app.use(i18n(app, {
         directory: __dirname + '/fixtures/locales',
@@ -244,7 +242,7 @@ describe('koa-i18n', function() {
       request(app.listen())
         .get('/')
         .set('Accept-Language', 'it')
-        .set('Cookie', 'lang=zh-cn')
+        .set('Cookie', 'locale=zh-cn')
         .expect(/简体中文/)
         .expect(200, done);
     });
