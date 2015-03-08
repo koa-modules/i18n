@@ -241,8 +241,8 @@ describe('koa-i18n', function() {
     it('should be `zh-cn` locale', function(done) {
       request(app.listen())
         .get('/')
-        .set('Accept-Language', 'it')
         .set('Cookie', 'locale=zh-cn')
+        .set('Accept-Language', 'en')
         .expect(/简体中文/)
         .expect(200, done);
     });

@@ -23,9 +23,11 @@ function I18n(opts) {
   i18n2.call(this, opts);
   var enables = this.enables = [];
   var modes = opts.modes || [];
-  localeMethods.forEach(function (v) {
-    var lv = v.toLowerCase();
-    if (modes.filter(function (t) { return t.toLowerCase() === lv; }).length) {
+  modes.forEach(function (v) {
+    v = localeMethods.filter(function (t) {
+      return t.toLowerCase() === v.toLowerCase();
+    })[0];
+    if (v) {
       enables.push(v);
     }
   });
@@ -42,7 +44,7 @@ localeMethods.forEach(function (m) {
   Object.defineProperty(I18n.prototype, SET_PREFIX + m, {
     value: function () {
       var locale = getLocale(this.request[GET_PREFIX + m]());
-      if (locale === this.getLocale().toLowerCase()) return;
+      if (locale === this.getLocale().toLowerCase()) return true;
       if ((locale = filter(locale, this.locales))) {
         this.setLocale(locale);
         debug('Overriding locale from %s : %s', m.toLowerCase(), locale);
@@ -93,8 +95,8 @@ function ial(app, opts) {
   return function *i18nMiddleware(next) {
     var i18n = this.i18n;
     var enables = i18n.enables;
-    enables.forEach(function (key) {
-      if (i18n[SET_PREFIX + key]()) return false;
+    enables.some(function (key) {
+      if (i18n[SET_PREFIX + key]()) return true;
     });
     yield next;
   };
