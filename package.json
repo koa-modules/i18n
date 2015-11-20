@@ -22,6 +22,7 @@
     "i18n-2": "*"
   },
   "devDependencies": {
+    "istanbul": "^0.4.0",
     "jade": "*",
     "koa": "1.x",
     "koa-compose": "2.x",
@@ -31,6 +32,9 @@
     "mocha": "*",
     "should": "*",
     "supertest": "*"
+  },
+  "engines": {
+    "node": ">= 4.0.0"
   },
   "files": [
     "LICENSE",
