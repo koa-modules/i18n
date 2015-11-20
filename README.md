@@ -41,7 +41,8 @@ app.use(i18n(app, {
     'cookie',               //  optional detect cookie      - `Cookie: locale=zh-TW`
     'header',               //  optional detect header      - `Accept-Language: zh-CN,zh;q=0.5`
     'url',                  //  optional detect url         - `/en`
-    'tld'                   //  optional detect tld(the last domain) - `koajs.cn`
+    'tld',                  //  optional detect tld(the last domain) - `koajs.cn`
+    function() {}           //  optional custom function (will be bound to the koa context)
   ]
 }));
 
