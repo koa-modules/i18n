@@ -20,9 +20,11 @@ function I18n(opts) {
   var enables = this.enables = []
   var modes = opts.modes || []
   modes.forEach(function (v) {
-    v = localeMethods.filter(function (t) {
-      return t.toLowerCase() === v.toLowerCase()
-    })[0]
+    if(typeof v !== 'function') {
+      v = localeMethods.filter(function (t) {
+        return t.toLowerCase() === v.toLowerCase()
+      })[0]
+    }
     if (v) {
       enables.push(v)
     }
@@ -89,11 +91,10 @@ function ial(app, opts) {
   });
 
   return function *i18nMiddleware(next) {
-    var i18n = this.i18n
-    var enables = i18n.enables
-    enables.some(function (key) {
-      if (i18n[SET_PREFIX + key]()) return true
-    })
+    this.i18n.enables.some(function (key) {
+      var customLocaleMethod = typeof key === 'function' && this.i18n.setLocale(key.apply(this));
+      if (customLocaleMethod || this.i18n[SET_PREFIX + key]()) return true;
+    }.bind(this));
     yield next
   }
 }
