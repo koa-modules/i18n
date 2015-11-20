@@ -22,7 +22,7 @@
   "devDependencies": {
     "jade": "*",
     "koa": "1.x",
-    "koa-compose": "*",
+    "koa-compose": "2.x",
     "koa-locale": "*",
     "koa-swig": "2.x",
     "koa-views": "*",
