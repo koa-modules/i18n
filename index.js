@@ -85,10 +85,8 @@ function ial(app, opts) {
       i18n.request = this.request
 
       // merge into ctx.state
+      this.state.i18n = i18n
       registerMethods(this.state, i18n)
-      Object.defineProperty(this.state, 'i18n', {
-        value: i18n
-      })
 
       debug('app.ctx.i18n %j', i18n)
       return i18n
