@@ -9,6 +9,10 @@
 [![License][license-img]][license-url]
 [![Dependency status][david-img]][david-url]
 
+koa-i18n version | branch | koa version
+---------------- | ------ | -----------
+1.x (latest)     | v1.x   | 1.x (latest)
+2.x (next)       | master | 2.x (next)
 
 ### Installation
 
