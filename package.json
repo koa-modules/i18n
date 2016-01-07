@@ -22,10 +22,11 @@
     "i18n-2": "*"
   },
   "devDependencies": {
-    "istanbul": "^0.4.0",
+    "istanbul": "0.4.x",
     "jade": "*",
-    "koa": "1.x",
-    "koa-compose": "2.x",
+    "koa": "next",
+    "koa-compose": "3.x",
+    "koa-convert": "1.x",
     "koa-locale": "*",
     "koa-swig": "2.*",
     "koa-views": "*",

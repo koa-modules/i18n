@@ -4,9 +4,11 @@
  * Module dependencies.
  */
 
+const assert = require('assert')
 const path = require('path')
 const request = require('supertest')
-const koa = require('koa')
+const Koa = require('koa')
+const convert = require('koa-convert')
 const compose = require('koa-compose')
 const locale = require('koa-locale')
 const render = require('koa-swig')
@@ -17,7 +19,7 @@ describe('koa-i18n', () => {
 
   describe('Detect the Querystring', () => {
     it('should be `en` locale', () => {
-      var app = koa()
+      var app = new Koa()
 
       locale(app)
 
@@ -27,44 +29,46 @@ describe('koa-i18n', () => {
         modes: ['query']
       }))
 
-      app.use(function*(next) {
-        this.body = this.i18n.__("locales.en")
-      })
+      app.use(convert(function*(next) {
+        this.body = this.i18n.__('locales.en')
+      }))
 
       return request(app.listen())
-        .get('/?locale=en')
-        .expect(/english/i)
-        .expect(200)
+      .get('/?locale=en')
+      .expect(/english/i)
+      .expect(200)
     })
 
   })
 
   describe('Detect the Subdomain', () => {
-    var app = koa()
+    var app = new Koa()
+    var currentLocale
 
     locale(app)
 
-    var enApp = koa()
-    enApp.use(function*() {
-      this.body = this.getLocaleFromSubdomain()
-    })
-    enApp = compose(enApp)
+    var enApp = new Koa()
+    enApp.use(convert(function*() {
+      currentLocale = this.getLocaleFromSubdomain()
+    }))
+    enApp = compose(enApp.middleware)
 
-    var zhCNApp = koa()
-    zhCNApp.use(function*() {
-      this.body = this.getLocaleFromSubdomain()
-    })
-    zhCNApp = compose(zhCNApp)
+    var zhCNApp = new Koa()
+    zhCNApp.use(convert(function*() {
+      currentLocale = this.getLocaleFromSubdomain()
+    }))
+    zhCNApp = compose(zhCNApp.middleware)
 
-    app.use(function*(next) {
+    app.use(convert(function*(next) {
+      currentLocale = undefined
       switch (this.host) {
         case 'en.koajs.com':
-          return yield enApp.call(this, next)
+          yield enApp.call(this, this)
         case 'zh-CN.koajs.com':
-          return yield zhCNApp.call(this, next)
+          yield zhCNApp.call(this, this)
       }
       yield next
-    })
+    }))
 
     app.use(i18n(app, {
       directory: __dirname + '/fixtures/locales',
@@ -72,39 +76,42 @@ describe('koa-i18n', () => {
       modes: ['subdomain']
     }))
 
-    app.use(function*(next) {
-      this.body = this.i18n.__("locales.en")
-    })
+    app.use(convert(function*(next) {
+      if (currentLocale) {
+        assert(currentLocale === this.getLocaleFromSubdomain())
+      }
+      this.body = this.i18n.__('locales.en')
+    }))
 
     it('should be `en` locale', () => {
       return request(app.listen())
-        .get('/')
-        .set('Host', 'eN.koajs.com')
-        .expect(/English/)
-        .expect(200)
+      .get('/')
+      .set('Host', 'en.koajs.com')
+      .expect(/English/)
+      .expect(200)
     })
 
     it('should be `zh-cn` locale', () => {
       return request(app.listen())
-        .get('/')
-        .set('Host', 'zh-CN.koajs.com')
-        .expect(/英文/)
-        .expect(200)
+      .get('/')
+      .set('Host', 'zh-CN.koajs.com')
+      .expect(/英文/)
+      .expect(200)
     })
 
     it('should be `zh-tw` locale', () => {
       return request(app.listen())
-        .get('/')
-        .set('Host', 'zh-TW.koajs.com')
-        .expect(/locales.en/)
-        .expect(200)
+      .get('/')
+      .set('Host', 'zh-TW.koajs.com')
+      .expect(/locales.en/)
+      .expect(200)
     })
 
   })
 
   describe('Dected the header', () => {
     it('should be `zh-tw` locale', () => {
-      var app = koa()
+      var app = new Koa()
 
       locale(app)
 
@@ -114,21 +121,21 @@ describe('koa-i18n', () => {
         modes: ['header']
       }))
 
-      app.use(function*(next) {
-        this.body = this.i18n.__("locales.zh-CN")
-      })
+      app.use(convert(function*(next) {
+        this.body = this.i18n.__('locales.zh-CN')
+      }))
 
       return request(app.listen())
-        .get('/')
-        .set('Accept-Language', 'zh-TW')
-        .expect(/簡體中文/)
-        .expect(200)
+      .get('/')
+      .set('Accept-Language', 'zh-TW')
+      .expect(/簡體中文/)
+      .expect(200)
     })
   })
 
   describe('Detect the cookie', () => {
     it('should be `zh-cn` locale', () => {
-      var app = koa()
+      var app = new Koa()
 
       locale(app)
 
@@ -138,21 +145,21 @@ describe('koa-i18n', () => {
         modes: ['cookie']
       }))
 
-      app.use(function*(next) {
-        this.body = this.i18n.__("locales.zh-CN")
-      })
+      app.use(convert(function*(next) {
+        this.body = this.i18n.__('locales.zh-CN')
+      }))
 
       return request(app.listen())
-        .get('/')
-        .set('Cookie', 'locale=zh-cn')
-        .expect(/简体中文/)
-        .expect(200)
+      .get('/')
+      .set('Cookie', 'locale=zh-cn')
+      .expect(/简体中文/)
+      .expect(200)
     })
   })
 
   describe('working together, i18n and swig-render', () => {
     it('should be render by zh-cn locale', () => {
-      var app = koa()
+      var app = new Koa()
 
       locale(app)
 
@@ -167,21 +174,21 @@ describe('koa-i18n', () => {
         ext: 'html'
       })
 
-      app.use(function*(next) {
+      app.use(convert(function*(next) {
         yield this.render('index')
-      })
+      }))
 
       return request(app.listen())
-        .get('/')
-        .set('Cookie', 'locale=zh-cn')
-        .expect(/英文/)
-        .expect(200)
+      .get('/')
+      .set('Cookie', 'locale=zh-cn')
+      .expect(/英文/)
+      .expect(200)
     })
   })
 
   describe('working together with koa-views, jade render', () => {
     it('should be render by zh-cn locale', () => {
-      var app = koa()
+      var app = new Koa()
 
       locale(app, 'lang')
 
@@ -191,26 +198,26 @@ describe('koa-i18n', () => {
         modes: ['cookie']
       }))
 
-      app.use(views(__dirname + '/fixtures/', {
+      app.use(convert(views(__dirname + '/fixtures/', {
         default: 'jade'
+      })))
+
+      app.use(convert(function*(next) {
+        yield this.render('index')
       }))
 
-      app.use(function*(next) {
-        yield this.render('index')
-      })
-
       return request(app.listen())
-        .get('/')
-        .set('Cookie', 'lang=zh-cn')
-        .expect(/<div><p>英文<\/p><\/div>/)
-        .expect(200)
+      .get('/')
+      .set('Cookie', 'lang=zh-cn')
+      .expect(/<div><p>英文<\/p><\/div>/)
+      .expect(200)
     })
   })
 
   describe('Dected the header and cookie', () => {
     var app
     before(() => {
-      app = koa()
+      app = new Koa()
 
       locale(app)
 
@@ -220,26 +227,26 @@ describe('koa-i18n', () => {
         modes: ['cookie', 'header']
       }))
 
-      app.use(function*(next) {
-        this.body = this.i18n.__("locales.zh-CN")
-      })
+      app.use(convert(function*(next) {
+        this.body = this.i18n.__('locales.zh-CN')
+      }))
     })
 
     it('should be `zh-tw` locale', () => {
       return request(app.listen())
-        .get('/')
-        .set('Accept-Language', 'zh-TW')
-        .expect(/簡體中文/)
-        .expect(200)
+      .get('/')
+      .set('Accept-Language', 'zh-TW')
+      .expect(/簡體中文/)
+      .expect(200)
     })
 
     it('should be `zh-cn` locale', () => {
       return request(app.listen())
-        .get('/')
-        .set('Cookie', 'locale=zh-cn')
-        .set('Accept-Language', 'en')
-        .expect(/简体中文/)
-        .expect(200)
+      .get('/')
+      .set('Cookie', 'locale=zh-cn')
+      .set('Accept-Language', 'en')
+      .expect(/简体中文/)
+      .expect(200)
     })
   })
 
@@ -250,14 +257,14 @@ describe('koa-i18n', () => {
     }
 
     before(() => {
-      app = koa()
+      app = new Koa()
 
       locale(app)
 
-      app.use(function* dummyMiddleware(next) {
+      app.use(convert(function* dummyMiddleware(next) {
         this.state.defaultLocale = 'en'
         yield next
-      })
+      }))
 
       app.use(i18n(app, {
         directory: __dirname + '/fixtures/locales',
@@ -265,24 +272,50 @@ describe('koa-i18n', () => {
         modes: ['cookie', customMode]
       }))
 
-      app.use(function*(next) {
-        this.body = this.i18n.__("locales.zh-CN")
-      })
+      app.use(convert(function*(next) {
+        this.body = this.i18n.__('locales.zh-CN')
+      }))
     })
 
     it('should be `en` locale', () => {
       return request(app.listen())
-        .get('/')
-        .expect(/Chinese\(Simplified\)/)
-        .expect(200)
+      .get('/')
+      .expect(/Chinese\(Simplified\)/)
+      .expect(200)
     })
 
     it('should be `zh-cn` locale', () => {
       return request(app.listen())
-        .get('/')
-        .set('Cookie', 'locale=zh-cn')
-        .expect(/简体中文/)
-        .expect(200)
+      .get('/')
+      .set('Cookie', 'locale=zh-cn')
+      .expect(/简体中文/)
+      .expect(200)
     })
+  })
+
+  describe('ctx.state has i18n property', () => {
+    it('should be `en` locale', () => {
+      var app = new Koa()
+
+      locale(app)
+
+      app.use(i18n(app, {
+        directory: __dirname + '/fixtures/locales',
+        locales: ['zh-CN', 'en'],
+        modes: ['query']
+      }))
+
+      app.use(convert(function*(next) {
+        assert(this.state.i18n === this.i18n)
+        assert.deepEqual(Object.keys(this.state.i18n.locales), ['zh-CN', 'en'])
+        this.body = this.i18n.__('locales.en')
+      }))
+
+      return request(app.listen())
+      .get('/?locale=en')
+      .expect(/english/i)
+      .expect(200)
+    })
+
   })
 })

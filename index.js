@@ -18,7 +18,8 @@ const LOCALE_METHODS = [
   'Cookie',
   'Header',
   'Query',
-  'Url', 'TLD'
+  'Url',
+  'TLD'
 ]
 const SET_PREFIX = 'setLocaleFrom'
 const GET_PREFIX = 'getLocaleFrom'
@@ -27,24 +28,23 @@ const GET_PREFIX = 'getLocaleFrom'
  * Hacked i18n.
  */
 
-function I18n(opts) {
-  I18n2.call(this, opts)
-  const enables = this.enables = []
-  const modes = opts.modes || []
-  modes.forEach(v => {
-    if(typeof v !== 'function') {
-      v = LOCALE_METHODS.filter((t) => {
-        return t.toLowerCase() === v.toLowerCase()
-      })[0]
-    }
-    if (v) {
-      enables.push(v)
-    }
-  })
-}
+class I18n extends I18n2 {
 
-Object.setPrototypeOf(I18n, I18n2)
-Object.setPrototypeOf(I18n.prototype, I18n2.prototype)
+  constructor(opts) {
+    super(opts)
+    const modes = opts.modes || []
+    const whitelist = this.whitelist = []
+    modes.forEach(v => {
+      if(typeof v !== 'function') {
+        v = LOCALE_METHODS.filter(
+          (t) => t.toLowerCase() === v.toLowerCase()
+        )[0]
+      }
+      if (v) whitelist.push(v)
+    })
+  }
+
+}
 
 LOCALE_METHODS.forEach((m) => {
   Object.defineProperty(I18n.prototype, SET_PREFIX + m, {
@@ -85,10 +85,13 @@ function ial(app, opts) {
       i18n.request = this.request
 
       // merge into ctx.state
-      registerMethods(this.state, this._i18n)
+      registerMethods(this.state, i18n)
+      Object.defineProperty(this.state, 'i18n', {
+        value: i18n
+      })
 
-      debug('app.ctx.i18n %j', this._i18n)
-      return this._i18n
+      debug('app.ctx.i18n %j', i18n)
+      return i18n
     }
   })
 
@@ -98,14 +101,13 @@ function ial(app, opts) {
     }
   })
 
-  return function *i18nMiddleware(next) {
-    this.i18n.enables.some((key => {
-      const customLocaleMethod = typeof key === 'function' &&
-        this.i18n.setLocale(key.apply(this))
-      if (customLocaleMethod || this.i18n[SET_PREFIX + key]()) return true
-    }).bind(this))
-
-    yield next
+  return function i18nMiddleware(ctx, next) {
+    ctx.i18n.whitelist.some(key => {
+      const customLocaleMethod = typeof key === 'function'
+        && ctx.i18n.setLocale(key.apply(ctx))
+      if (customLocaleMethod || ctx.i18n[SET_PREFIX + key]()) return true
+    })
+    return next()
   }
 }
 
@@ -115,11 +117,8 @@ function ial(app, opts) {
 
 function registerMethods(helpers, i18n) {
   I18n.resMethods.forEach(method => {
-    helpers[method] = function () {
-      return i18n[method].apply(i18n, arguments)
-    }
+    helpers[method] = i18n[method].bind(i18n)
   })
-  return helpers
 }
 
 function getLocale(locale) {
@@ -127,10 +126,9 @@ function getLocale(locale) {
 }
 
 function filter(locale, locales) {
-  for (let k in locales) {
+  for (const k in locales) {
     if (locale === k.toLowerCase()) {
       return k
     }
   }
-  return null
 }
