@@ -316,6 +316,28 @@ describe('koa-i18n', () => {
       .expect(/english/i)
       .expect(200)
     })
+  })
 
+  describe('app.request has i18n property', () => {
+    it('should be `en` locale', () => {
+      var app = new Koa()
+
+      locale(app)
+
+      app.use(i18n(app, {
+        directory: __dirname + '/fixtures/locales',
+        locales: ['zh-CN', 'en'],
+        modes: ['query']
+      }))
+
+      app.use(convert(function*(next) {
+        this.body = !!this.request.i18n
+      }))
+
+      return request(app.listen())
+      .get('/?locale=en')
+      .expect(/true/)
+      .expect(200)
+    })
   })
 })
