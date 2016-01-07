@@ -11,8 +11,8 @@
 
 koa-i18n version | branch | koa version
 ---------------- | ------ | -----------
-1.x (latest)     | v1.x   | 1.x (latest)
-2.x (next)       | master | 2.x (next)
+1.x **latest**   | v1.x   | 1.x **latest**
+2.x **next**     | master | 2.x **next**
 
 ### Installation
 
@@ -23,18 +23,21 @@ $ npm install koa-i18n
 ### Usage
 
 ```js
-var app = require('koa')();
-var locale = require('koa-locale'); //  detect the locale
-var render = require('koa-swig');   //  swig render
-var i18n = require('koa-i18n');
+const Koa = require('koa')
+const convert = require('koa-convert')
+const locale = require('koa-locale') //  detect the locale
+const render = require('koa-swig')   //  swig render
+const i18n = require('koa-i18n')
+
+const app = new Koa()
 
 // Required!
-locale(app);
+locale(app)
 
-render(app, {
+app.context.render = render({
   root: __dirname + '/views/',
   ext: 'html'
-});
+})
 
 app.use(i18n(app, {
   directory: './config/locales',
@@ -48,15 +51,15 @@ app.use(i18n(app, {
     'tld',                  //  optional detect tld(the last domain) - `koajs.cn`
     function() {}           //  optional custom function (will be bound to the koa context)
   ]
-}));
+}))
 
-app.use(function *(next) {
-  this.body = this.i18n.__('any key');
-});
+app.use(function (ctx) {
+  ctx.body = ctx.i18n.__('any key');
+})
 
-app.use(function *(next) {
+app.use(convert(function *() {
   yield this.render('index')
-});
+}))
 ```
 
 > **Tip**: We can change position of the elements in the `modes` array.
