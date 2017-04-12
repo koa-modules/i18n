@@ -1,7 +1,8 @@
 # koa-i18n
 
 > I18n fro koa, based on [i18n-2].
-> **NOTE**: If want to use koa-i18n, [koa-locale] must be required!
+>
+> **NOTE**: You must require('[koa-locale]') to make it detect locale info from headers, queries etc.
 
 [![NPM version][npm-img]][npm-url]
 [![Build status][travis-img]][travis-url]
@@ -31,14 +32,15 @@ const i18n = require('koa-i18n')
 
 const app = new Koa()
 
-// Required!
-locale(app)
-
 app.context.render = render({
   root: __dirname + '/views/',
   ext: 'html'
 })
 
+// First, load koa-locale into the app
+locale(app)
+
+// Then config koa-i18n
 app.use(i18n(app, {
   directory: './config/locales',
   locales: ['zh-CN', 'en'], //  `zh-CN` defualtLocale, must match the locales to the filenames
@@ -53,6 +55,7 @@ app.use(i18n(app, {
   ]
 }))
 
+// And use it with ctx.i18n.__('KEY');
 app.use(function (ctx) {
   ctx.body = ctx.i18n.__('any key');
 })
@@ -63,7 +66,8 @@ app.use(convert(function *() {
 ```
 
 > **Tip**: We can change position of the elements in the `modes` array.
-> If one mode is detected, no continue to detect.
+>
+> If the client locale info is matched in one mode, the middleware will stop detecting and take that value.
 
 
 ### Dependencies
