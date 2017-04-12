@@ -50,7 +50,7 @@ LOCALE_METHODS.forEach((m) => {
   Object.defineProperty(I18n.prototype, SET_PREFIX + m, {
     value: function () {
       let locale = getLocale(this.request[GET_PREFIX + m]())
-      if (locale === this.getLocale().toLowerCase()) return true
+      if (locale === this.getLocale()) return true
       if ((locale = filter(locale, this.locales))) {
         this.setLocale(locale)
         debug('Overriding locale from %s : %s', m.toLowerCase(), locale)
@@ -81,8 +81,9 @@ function ial(app, opts) {
         return this._i18n
       }
 
-      const i18n = this._i18n = new I18n(opts)
+      const i18n = new I18n(opts)
       i18n.request = this.request
+      this._i18n = i18n
 
       // merge into ctx.state
       this.state.i18n = i18n

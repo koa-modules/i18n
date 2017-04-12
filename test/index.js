@@ -16,7 +16,6 @@ const views = require('koa-views')
 const i18n = require('..')
 
 describe('koa-i18n', () => {
-
   describe('Detect the Querystring', () => {
     it('should be `en` locale', () => {
       var app = new Koa()
@@ -186,7 +185,7 @@ describe('koa-i18n', () => {
     })
   })
 
-  describe('working together with koa-views, jade render', () => {
+  describe('working together with koa-views, pug render', () => {
     it('should be render by zh-cn locale', () => {
       var app = new Koa()
 
@@ -198,19 +197,19 @@ describe('koa-i18n', () => {
         modes: ['cookie']
       }))
 
-      app.use(convert(views(__dirname + '/fixtures/', {
-        default: 'jade'
-      })))
-
-      app.use(convert(function*(next) {
-        yield this.render('index')
+      app.use(views(__dirname + '/fixtures/', {
+        extension: 'pug'
       }))
 
+      app.use(async (ctx, next) => {
+        await ctx.render('index')
+      })
+
       return request(app.listen())
-      .get('/')
-      .set('Cookie', 'lang=zh-cn')
-      .expect(/<div><p>英文<\/p><\/div>/)
-      .expect(200)
+        .get('/')
+        .set('Cookie', 'lang=zh-cn')
+        .expect(/<div><p>英文<\/p><\/div>/)
+        .expect(200)
     })
   })
 
