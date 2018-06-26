@@ -41,7 +41,8 @@ app.context.render = render({
 
 app.use(i18n(app, {
   directory: './config/locales',
-  locales: ['zh-CN', 'en'], //  `zh-CN` defualtLocale, must match the locales to the filenames
+  locales: ['zh-CN', 'en'], //  `zh-CN` defaultLocale, must match the locales to the filenames
+  defaultLocale: 'en-US',
   modes: [
     'query',                //  optional detect querystring - `/?locale=en-US`
     'subdomain',            //  optional detect subdomain   - `zh-CN.koajs.com`
