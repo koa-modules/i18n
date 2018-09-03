@@ -91,13 +91,15 @@ function ial(app, opts) {
 
       debug('app.ctx.i18n %j', i18n)
       return i18n
-    }
+    },
+    configurable: true
   })
 
   Object.defineProperty(app.request, 'i18n', {
     get: function () {
       return this.ctx.i18n
-    }
+    },
+    configurable: true
   })
 
   return function i18nMiddleware(ctx, next) {
